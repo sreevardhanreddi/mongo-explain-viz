@@ -1,9 +1,10 @@
 # Mongo Explain Visualizer
 
 A small React app to **visualize, debug, and explain MongoDB explain plans**.
-Paste the JSON output of `explain()` and the app renders the execution-plan
-tree, a stats summary, and plain-language insights flagging common performance
-problems (collection scans, blocking sorts, low index selectivity, etc.).
+Paste the JSON output of `explain()` and the app renders a stats summary,
+plain-language insights flagging common performance problems (collection scans,
+blocking sorts, low index selectivity, etc.), and either an execution-plan tree
+(for `find` queries) or a stage-by-stage pipeline view (for aggregations).
 
 ![Screenshot](./image.png)
 
@@ -30,8 +31,9 @@ npm run preview  # preview the production build
    db.orders.find({ status: "shipped" }).sort({ createdAt: -1 }).explain("executionStats")
    ```
 
-2. Copy the JSON result and paste it into the left panel (or click a sample).
-3. Read the **Summary**, **Insights**, and **Execution Plan Tree** on the right.
+2. Copy the JSON result and paste it into the left panel.
+3. Read the **Summary**, **Insights**, and the **Execution Plan Tree**
+   (`find`) or **Pipeline** view (aggregation) on the right.
 
 `queryPlanner`-only output (without `executionStats`) is supported too — you
 just won't get timing/examined metrics. Aggregation explains are read via their
@@ -48,8 +50,14 @@ src/
   components/
     Summary.tsx       top-line stats
     Insights.tsx      flagged performance findings
-    StageNode.tsx     recursive plan-tree node
-  sampleData.ts       example explain plans
+    StageNode.tsx     recursive plan-tree node (find queries)
+    PipelineView.tsx  per-stage pipeline view (aggregations)
   types.ts            shared types
   App.tsx             layout + input handling
+  main.tsx            React entry point
 ```
+
+## Deployment
+
+Pushing to `main` builds the app and publishes `dist/` to GitHub Pages via the
+workflow in `.github/workflows/`.
